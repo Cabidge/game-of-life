@@ -9,6 +9,7 @@
         />
     </div>
     <button @click="updateCells">Step</button>
+    <button @click="randomize">Randomize</button>
 </template>
 
 <script lang="ts">
@@ -62,6 +63,9 @@ export default defineComponent({
                 }
             }
             this.areAlive = newAlives;
+        },
+        randomize() {
+            this.areAlive = this.areAlive.map(() => Math.random() < 0.5);
         },
         rawIndex(x: number, y: number) {
             return y * this.width + x;
