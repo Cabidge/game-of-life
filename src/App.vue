@@ -1,5 +1,5 @@
 <template>
-    <GameBoard />
+    <GameBoard width="64" height="32" />
 </template>
 
 <script lang="ts">

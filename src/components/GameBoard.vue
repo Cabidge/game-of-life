@@ -1,10 +1,10 @@
 <template>
     <div class="board" :style="gridStyle">
         <GridCell
-            v-for="(isAlive, index) in areAlive"
+            v-for="index in width * height"
             :key="index"
             :index="index"
-            :isAlive="isAlive"
+            :isAlive="areAlive.has(index)"
             @toggled="toggleCell"
         />
     </div>
@@ -36,9 +36,8 @@ export default defineComponent({
         },
     },
     data() {
-        const areAlive: boolean[] = Array(this.width * this.height).fill(false);
         return {
-            areAlive,
+            areAlive: new Set<number>(),
         };
     },
     computed: {
@@ -53,47 +52,55 @@ export default defineComponent({
     },
     methods: {
         toggleCell(index: number) {
-            this.areAlive[index] = !this.areAlive[index];
+            if (!this.areAlive.delete(index)) {
+                this.areAlive.add(index);
+            }
         },
         updateCells() {
-            const newAlives = [];
-            for (let x = 0; x < this.width; x++) {
-                for (let y = 0; y < this.height; y++) {
-                    newAlives[this.rawIndex(x, y)] = this.willLive(x, y);
+            const neighborCount = new Map<number, number>();
+            this.areAlive.forEach((index) => {
+                const [x, y] = this.splitXY(index);
+                for (let x2 = x - 1; x2 < x + 2; x2++) {
+                    for (let y2 = y - 1; y2 < y + 2; y2++) {
+                        if (
+                            x2 >= 0 &&
+                            x2 < this.width &&
+                            y2 >= 0 &&
+                            y2 < this.height &&
+                            (x2 != x || y2 != y)
+                        ) {
+                            const index2 = this.rawIndex(x2, y2);
+                            const newCount =
+                                (neighborCount.get(index2) || 0) + 1;
+                            neighborCount.set(index2, newCount);
+                        }
+                    }
                 }
-            }
+            });
+            const newAlives = new Set<number>();
+            neighborCount.forEach((count, index) => {
+                if (count == 3 || (count == 2 && this.areAlive.has(index))) {
+                    newAlives.add(index);
+                    console.log(index);
+                }
+            });
             this.areAlive = newAlives;
         },
+        splitXY(index: number) {
+            const x = index % this.width;
+            const y = ~~(index / this.width);
+            return [x, y];
+        },
         randomize() {
-            this.areAlive = this.areAlive.map(() => Math.random() < 0.5);
+            this.areAlive = new Set();
+            for (let i = 0; i < this.width * this.height; i++) {
+                if (Math.random() < 0.5) {
+                    this.areAlive.add(i);
+                }
+            }
         },
         rawIndex(x: number, y: number) {
             return y * this.width + x;
-        },
-        isAlive(x: number, y: number) {
-            return (
-                x >= 0 &&
-                x < this.width &&
-                y >= 0 &&
-                y < this.height &&
-                this.areAlive[this.rawIndex(x, y)]
-            );
-        },
-        willLive(x: number, y: number) {
-            const neighbors = this.countNeighbors(x, y);
-            return neighbors === 3 || (neighbors === 2 && this.isAlive(x, y));
-        },
-        countNeighbors(x: number, y: number) {
-            let count = 0;
-            for (let nX = x - 1; nX < x + 2; nX++) {
-                for (let nY = y - 1; nY < y + 2; nY++) {
-                    console.log(nX, nY);
-                    if ((nX !== x || nY !== y) && this.isAlive(nX, nY)) {
-                        count++;
-                    }
-                }
-            }
-            return count;
         },
     },
 });
