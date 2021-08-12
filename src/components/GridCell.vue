@@ -23,10 +23,10 @@ export default defineComponent({
 
 <style scoped>
 div {
-    background-color: black;
+    background-color: white;
 }
 
 div.alive {
-    background-color: white;
+    background-color: black;
 }
 </style>
