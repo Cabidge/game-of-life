@@ -1,8 +1,8 @@
 <template>
     <div class="board" :style="gridStyle">
         <GridCell
-            v-for="index in width * height"
-            :key="index"
+            v-for="(n, index) in width * height"
+            :key="n"
             :index="index"
             :isAlive="areAlive.has(index)"
             @toggled="toggleCell"
@@ -80,6 +80,7 @@ export default defineComponent({
                 const [x, y] = this.splitXY(index);
                 for (let x2 = x - 1; x2 < x + 2; x2++) {
                     for (let y2 = y - 1; y2 < y + 2; y2++) {
+                        console.log(x2, y2);
                         if (
                             x2 >= 0 &&
                             x2 < this.width &&
