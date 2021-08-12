@@ -99,7 +99,6 @@ export default defineComponent({
             neighborCount.forEach((count, index) => {
                 if (count == 3 || (count == 2 && this.areAlive.has(index))) {
                     newAlives.add(index);
-                    console.log(index);
                 }
             });
             this.areAlive = newAlives;
