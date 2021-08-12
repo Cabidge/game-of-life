@@ -1,9 +1,8 @@
 <template>
     <div
-        @mousedown="onMouseEvent"
+        @mousedown.prevent="onMouseEvent"
         @mouseenter="onMouseEvent"
         :class="{ alive: isAlive }"
-        draggable="false"
     ></div>
 </template>
 
