@@ -1,5 +1,10 @@
 <template>
-    <div @click="$emit('toggled', index)" :class="{ alive: isAlive }"></div>
+    <div
+        @mousedown="onMouseEvent"
+        @mouseenter="onMouseEvent"
+        :class="{ alive: isAlive }"
+        draggable="false"
+    ></div>
 </template>
 
 <script lang="ts">
@@ -15,6 +20,13 @@ export default defineComponent({
         isAlive: {
             type: Boolean,
             required: true,
+        },
+    },
+    methods: {
+        onMouseEvent(e: MouseEvent) {
+            if (e.buttons == 1) {
+                this.$emit("toggled", this.index);
+            }
         },
     },
     emits: ["toggled"],
