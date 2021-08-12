@@ -24,11 +24,10 @@ export default defineComponent({
 <style scoped>
 div {
     background-color: white;
-    border: 1px solid rgb(235, 235, 235);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 div.alive {
     background-color: black;
-    border: 1px solid black;
 }
 </style>
