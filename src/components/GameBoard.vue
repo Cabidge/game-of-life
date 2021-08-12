@@ -8,8 +8,16 @@
             @toggled="toggleCell"
         />
     </div>
+    <label for="auto-step">Auto-Step</label>
+    <input
+        id="auto-step"
+        type="checkbox"
+        @change="updateAuto"
+        v-model="autoEnabled"
+    />
     <button @click="updateCells">Step</button>
     <button @click="randomize">Randomize</button>
+    <button @click="clear">Clear</button>
 </template>
 
 <script lang="ts">
@@ -38,6 +46,8 @@ export default defineComponent({
     data() {
         return {
             areAlive: new Set<number>(),
+            autoIntervalId: 0,
+            autoEnabled: false,
         };
     },
     computed: {
@@ -54,6 +64,14 @@ export default defineComponent({
         toggleCell(index: number) {
             if (!this.areAlive.delete(index)) {
                 this.areAlive.add(index);
+            }
+        },
+        updateAuto() {
+            if (this.autoEnabled) {
+                this.updateCells();
+                this.autoIntervalId = setInterval(this.updateCells, 100);
+            } else {
+                clearInterval(this.autoIntervalId);
             }
         },
         updateCells() {
@@ -91,8 +109,11 @@ export default defineComponent({
             const y = ~~(index / this.width);
             return [x, y];
         },
-        randomize() {
+        clear() {
             this.areAlive = new Set();
+        },
+        randomize() {
+            this.clear();
             for (let i = 0; i < this.width * this.height; i++) {
                 if (Math.random() < 0.5) {
                     this.areAlive.add(i);
